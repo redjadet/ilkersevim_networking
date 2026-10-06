@@ -42,11 +42,13 @@ let response = try await client.send(APIRequest(url: url))
 
 ### CocoaPods
 
-The package is not published to CocoaPods trunk yet. Use Swift Package Manager
-above for installation.
+```ruby
+pod 'IlkerSevimNetworking', '~> 1.0'
+```
 
-A podspec is kept in the repository for local or private CocoaPods setups, and
-for a future trunk publish.
+The pod publishes to CocoaPods trunk via the
+[`publish-cocoapods`](.github/workflows/publish-cocoapods.yml) workflow
+(semver tags matching `X.Y.Z`, or manual `workflow_dispatch`).
 
 ## Public API
 

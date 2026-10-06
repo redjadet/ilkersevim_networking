@@ -1,0 +1,50 @@
+name: Publish CocoaPods
+
+on:
+  workflow_dispatch:
+    inputs:
+      podspec:
+        description: Path to the podspec file
+        required: false
+        default: IlkerSevimNetworking.podspec
+        type: string
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  publish:
+    name: Pod Trunk Push
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Select latest Xcode
+        uses: maxim-lobanov/setup-xcode@v1.7.0
+        with:
+          xcode-version: latest-stable
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Ensure COCOAPODS_TRUNK_TOKEN is set
+        env:
+          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+        run: |
+          if [ -z "${COCOAPODS_TRUNK_TOKEN}" ]; then
+            echo "::error::COCOAPODS_TRUNK_TOKEN secret is missing. Add it under repository Secrets before publishing."
+            exit 1
+          fi
+
+      - name: Install CocoaPods
+        run: gem install cocoapods --no-document
+
+      - name: Pod trunk push
+        env:
+          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+        run: |
+          PODSPEC="${{ github.event.inputs.podspec }}"
+          PODSPEC="${PODSPEC:-IlkerSevimNetworking.podspec}"
+          echo "Pushing podspec: ${PODSPEC}"
+          pod trunk push "${PODSPEC}" --allow-warnings

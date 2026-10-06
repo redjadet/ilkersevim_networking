@@ -1,11 +1,12 @@
 Pod::Spec.new do |s|
   s.name             = 'IlkerSevimNetworking'
   s.version          = '1.0.0'
-  s.summary          = 'URLSession networking with retry, idempotent POST, and token refresh.'
+  s.summary          = 'URLSession networking with retry, idempotent POST, and token refresh'
   s.description      = <<-DESC
-    Foundation-only Swift networking helpers: typed requests, retry policy
-    (backoff, jitter, Retry-After), idempotency-key gated POST retries,
-    one-shot 401 token refresh, and redacted logging.
+    Foundation-only Swift networking helpers built on URLSession: typed
+    requests, retry policy with backoff, jitter, and Retry-After handling,
+    idempotency-key gated POST retries, one-shot 401 token refresh, and
+    redacted host/status logging.
   DESC
   s.homepage         = 'https://github.com/redjadet/ilkersevim_networking'
   s.license          = { :type => 'Apache-2.0', :file => 'LICENSE' }
@@ -19,7 +20,5 @@ Pod::Spec.new do |s|
   s.osx.deployment_target = '14.0'
   s.watchos.deployment_target = '10.0'
   s.source_files     = 'Sources/IlkerSevimNetworking/**/*.swift'
-  s.frameworks       = 'Foundation'
-  s.ios.frameworks   = 'Security'
-  s.osx.frameworks   = 'Security'
+  s.frameworks       = 'Foundation', 'Security'
 end
