@@ -22,8 +22,6 @@ and redacted host/status logging.
 
 ### Swift Package Manager
 
-Swift Package Manager is the supported installation method:
-
 ```swift
 dependencies: [
   .package(url: "https://github.com/redjadet/ilkersevim_networking.git", from: "1.0.0")
@@ -42,13 +40,46 @@ let response = try await client.send(APIRequest(url: url))
 
 ### CocoaPods
 
+Version **1.0.0** is published on CocoaPods trunk:
+
 ```ruby
 pod 'IlkerSevimNetworking', '~> 1.0'
 ```
 
-The pod publishes to CocoaPods trunk via the
+Further trunk pushes use the
 [`publish-cocoapods`](.github/workflows/publish-cocoapods.yml) workflow
 (semver tags matching `X.Y.Z`, or manual `workflow_dispatch`).
+
+## Documentation
+
+Reviewer-oriented notes (claims cite types and paths under
+`Sources/` / `Tests/`):
+
+| Topic | Doc |
+| --- | --- |
+| Cancellation (`Task` / `URLError.cancelled` → `CancellationError`, no cancel handles, retry interaction) | [docs/cancellation.md](docs/cancellation.md) |
+| Caching honesty, token stores, refresh concurrency | [docs/caching-and-tokens.md](docs/caching-and-tokens.md) |
+| Design trade-offs, actors, errors, platform floors | [docs/design-decisions.md](docs/design-decisions.md) |
+| Test ↔ behavior map and CI jobs | [docs/testing.md](docs/testing.md) |
+
+This package does **not** ship a DocC catalog (no `.docc` bundle).
+
+### Cancellation (summary)
+
+`URLSessionAPIClient.send` cancels only via Swift `Task` cancellation and
+URLSession async failure: `Task.checkCancellation()` each attempt, then
+`CancellationError` or `URLError(.cancelled)` both surface as
+`CancellationError` — never as `APIError`. There is no explicit cancel
+handle. Cancel paths do not retry. Details:
+[docs/cancellation.md](docs/cancellation.md).
+
+### Caching and tokens (summary)
+
+No package-level `URLCache`, ETag, or conditional-request support.
+`DefaultURLSession` uses `URLSessionConfiguration.default` timeouts only.
+Tokens use `AccessTokenStore` / Keychain demos; refresh is one-shot per
+`send`, with actor demo refreshers but **no** single-flight coalescing.
+Details: [docs/caching-and-tokens.md](docs/caching-and-tokens.md).
 
 ## Public API
 
